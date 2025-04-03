@@ -99,13 +99,12 @@ while true; do
 
 # read the ShutdownGPIO pin and shutdown if neccesary
    ShutdownValue=$(pinctrl get $ShutdownGPIO | sed "s/^.*\(| hi \).*$/1/;s/^.*\(| lo \).*$/0/")
-      if [ $ShutdownValue -eq 0 ]
+      if [ $ShutdownValue -eq 1 ]
       then
          # The Shutdown GPIO has gone LOW - Debounce for 3 seconds, and if still low then shutdown
          echo "$Timestamp Shutdown signal has gone low - Debouncing over 3 seconds before initiating shutdown"
          sleep 3
-         ShutdownValue=$(pinctrl get $ShutdownGPIO | sed "s/^.*\(| hi \).*$/1/;s/^.*\(| lo \).*$/0/")
-         if [ $ShutdownValue -eq 0 ]
+         if [ $ShutdownValue -eq $(pinctrl get $ShutdownGPIO | sed "s/^.*\(| hi \).*$/1/;s/^.*\(| lo \).*$/0/") ]
          then          
             shutdown now
          fi
